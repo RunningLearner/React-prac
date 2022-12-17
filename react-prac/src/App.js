@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
+const App = () => {
+  const number = 1;
+
+  const double = (number) => {
+    return number * 2;
+  };
+
+  const hello = () => {
+    console.log("hello!!");
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div>{double(number)}</div>
+      <button onClick={hello}>submit</button>
+    </>
   );
-}
+};
 
 export default App;
