@@ -1,19 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 
 const App = () => {
-  const number = 1;
+  const [number, setNumber] = useState(1);
 
-  const double = (number) => {
-    return number * 2;
+  const double = () => {
+    setNumber(number * 2);
+    console.log(number);
   };
 
-  const hello = () => {
-    console.log("hello!!");
-  };
   return (
     <>
-      <div>{double(number)}</div>
-      <button onClick={hello}>submit</button>
+      <div>{number}</div>
+      <button onClick={double}>submit</button>
     </>
   );
 };
