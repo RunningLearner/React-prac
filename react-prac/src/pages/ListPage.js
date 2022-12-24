@@ -1,18 +1,18 @@
-import {useState, useEffect},React from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const ListPage = async () => {
-const [posts, setPosts] = useState([])
+const ListPage = () => {
+  const [posts, setPosts] = useState([]);
 
-    const getPosts = () => {
+  const getPosts = async () => {
     const res = await axios.get("http://localhost:3001/posts");
-    setPosts(res.data)
+    setPosts(res.data);
   };
 
   useEffect(() => {
-    getPosts()
-  }, [])
-  
+    getPosts();
+  }, []);
+
   return <div>L</div>;
 };
 
