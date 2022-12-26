@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Card from "../components/Card";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 
 const ListPage = () => {
+  const history = useHistory();
   const [posts, setPosts] = useState([]);
 
   const getPosts = async () => {
@@ -26,7 +28,19 @@ const ListPage = () => {
         </div>
       </div>
       {posts.map((post) => {
-        return <Card key={post.id} title={post.title} />;
+        return (
+          <Card
+            key={post.id}
+            title={post.title}
+            onClick={() => {
+              history.push("/blogs/edit");
+            }}
+          >
+            <div>
+              <button className="btn btn-danger">Delete</button>
+            </div>
+          </Card>
+        );
       })}
     </div>
   );
