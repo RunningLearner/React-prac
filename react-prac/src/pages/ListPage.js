@@ -13,6 +13,18 @@ const ListPage = () => {
     setPosts(res.data);
   };
 
+  const deleteBlog = async (e, id) => {
+    e.stopPropagation();
+
+    await axios.delete(`http://localhost:3001/posts/${id}`);
+    setPosts((prevPosts) => {
+      console.log(prevPosts);
+      return prevPosts.filter((post) => {
+        return post.id !== id;
+      });
+    });
+  };
+
   useEffect(() => {
     getPosts();
   }, []);
@@ -37,7 +49,12 @@ const ListPage = () => {
             }}
           >
             <div>
-              <button className="btn btn-danger">Delete</button>
+              <button
+                className="btn btn-danger"
+                onClick={(e) => deleteBlog(e, post.id)}
+              >
+                Delete
+              </button>
             </div>
           </Card>
         );
