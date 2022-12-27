@@ -18,7 +18,7 @@ const routes = [
     compoenets: CreatePage,
   },
   {
-    path: "/blogs/edit",
+    path: "/blogs/:id/edit",
     compoenets: EditPage,
   },
   {
