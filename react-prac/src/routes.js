@@ -2,6 +2,7 @@ import ListPage from "./pages/ListPage";
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
 import EditPage from "./pages/EditPage";
+import ShowPage from "./pages/ShowPage";
 
 const routes = [
   {
@@ -19,6 +20,10 @@ const routes = [
   {
     path: "/blogs/edit",
     compoenets: EditPage,
+  },
+  {
+    path: "/blogs/:id",
+    compoenets: ShowPage,
   },
 ];
 
