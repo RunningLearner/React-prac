@@ -1,20 +1,63 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Card from "../components/Card";
 import { useHistory } from "react-router";
+import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { bool } from "prop-types";
+import Pagination from "./Pagination";
+import propTypes from "prop-types";
 
 const BlogList = ({ isAdmin }) => {
   const history = useHistory();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const pageParam = params.get("page");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [numberOfPosts, setNumberOfPosts] = useState(0);
+  const [numberOfPages, setNumberOfPages] = useState(0);
+  const limit = 3;
 
-  const getPosts = async () => {
-    const res = await axios.get("http://localhost:3001/posts");
-    setPosts(res.data);
-    setLoading(false);
+  useEffect(() => {
+    setNumberOfPages(Math.ceil(numberOfPosts / limit));
+  }, [numberOfPosts]);
+
+  const onClickPageButton = (page) => {
+    history.push(`${location.pathname}?page=${page}`);
   };
+
+  const getPosts = useCallback(
+    (page = 1) => {
+      let params = {
+        _page: page,
+        _limit: limit,
+        _sort: "id",
+        _order: "desc",
+      };
+
+      if (!isAdmin) {
+        params = { ...params, publish: true };
+      }
+
+      axios
+        .get(`http://localhost:3001/posts`, {
+          params,
+        })
+        .then((res) => {
+          setNumberOfPosts(res.headers["x-total-count"]);
+          setPosts(res.data);
+          setLoading(false);
+        });
+    },
+    [isAdmin]
+  );
+
+  useEffect(() => {
+    setCurrentPage(parseInt(pageParam) || 1);
+    getPosts(parseInt(pageParam) || 1);
+  }, [pageParam, getPosts]);
 
   const deleteBlog = async (e, id) => {
     e.stopPropagation();
@@ -28,10 +71,6 @@ const BlogList = ({ isAdmin }) => {
     });
   };
 
-  useEffect(() => {
-    getPosts();
-  }, []);
-
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -40,11 +79,8 @@ const BlogList = ({ isAdmin }) => {
     return <div>"No blog posts found!"</div>;
   }
 
-  return posts
-    .filter((post) => {
-      return isAdmin || post.publish;
-    })
-    .map((post) => {
+  const renderBlogList = () => {
+    return posts.map((post) => {
       return (
         <Card
           key={post.id}
@@ -66,6 +102,22 @@ const BlogList = ({ isAdmin }) => {
         </Card>
       );
     });
+  };
+
+  return (
+    <div>
+      {renderBlogList()}
+
+      {numberOfPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          numberOfPages={numberOfPages}
+          onClick={onClickPageButton}
+          limit={limit}
+        />
+      )}
+    </div>
+  );
 };
 
 BlogList.propTypes = {
