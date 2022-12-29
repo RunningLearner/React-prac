@@ -6,6 +6,8 @@ import { useLocation } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Pagination from "./Pagination";
 import propTypes from "prop-types";
+import Toast from "./Toast";
+import { v4 as uuidv4 } from "uuid";
 
 const BlogList = ({ isAdmin }) => {
   const history = useHistory();
@@ -18,6 +20,7 @@ const BlogList = ({ isAdmin }) => {
   const [numberOfPosts, setNumberOfPosts] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [searchText, setSearchText] = useState("");
+  const [toasts, setToasts] = useState([]);
 
   const limit = 3;
 
@@ -63,14 +66,38 @@ const BlogList = ({ isAdmin }) => {
     getPosts(parseInt(pageParam) || 1);
   }, []);
 
-  const deleteBlog = async (e, id) => {
+  const deleteToast = (id) => {
+    const filteredToasts = toasts.filter((toast) => {
+      return toast.id !== id;
+    });
+    setToasts(filteredToasts);
+  };
+
+  const addToast = (toast) => {
+    const id = uuidv4();
+    const toastWithId = {
+      ...toast,
+      id,
+    };
+    setToasts((prev) => [...prev, toastWithId]);
+
+    setTimeout(() => {
+      deleteToast(id);
+    }, 5000);
+  };
+
+  const deleteBlog = (e, id) => {
     e.stopPropagation();
 
-    await axios.delete(`http://localhost:3001/posts/${id}`);
-    setPosts((prevPosts) => {
-      console.log(prevPosts);
-      return prevPosts.filter((post) => {
-        return post.id !== id;
+    axios.delete(`http://localhost:3001/posts/${id}`).then(() => {
+      setPosts((prevPosts) => {
+        return prevPosts.filter((post) => {
+          return post.id !== id;
+        });
+      });
+      addToast({
+        text: "Successfully deleted!",
+        type: "success",
       });
     });
   };
@@ -114,6 +141,7 @@ const BlogList = ({ isAdmin }) => {
 
   return (
     <div>
+      <Toast toasts={toasts} deleteToast={deleteToast} />
       <input
         type="text"
         placeholder="Search.."

@@ -25,50 +25,29 @@
       "title": "4",
       "body": "4",
       "publish": false,
-      "createdAt": 1672206824514,
+      "createdAt": 1672300100052,
       "id": 4
     },
     {
       "title": "5",
       "body": "5",
       "publish": false,
-      "createdAt": 1672206827170,
+      "createdAt": 1672300102715,
       "id": 5
     },
     {
       "title": "6",
       "body": "6",
       "publish": false,
-      "createdAt": 1672206830010,
+      "createdAt": 1672300105499,
       "id": 6
     },
     {
       "title": "7",
       "body": "7",
       "publish": false,
-      "createdAt": 1672206832642,
+      "createdAt": 1672300367460,
       "id": 7
-    },
-    {
-      "title": "8",
-      "body": "8",
-      "publish": false,
-      "createdAt": 1672206835058,
-      "id": 8
-    },
-    {
-      "title": "",
-      "body": "",
-      "publish": false,
-      "createdAt": 1672280347089,
-      "id": 9
-    },
-    {
-      "title": "ㅁㄴ",
-      "body": "ㅁㄴ",
-      "publish": false,
-      "createdAt": 1672280576690,
-      "id": 10
     }
   ]
 }
