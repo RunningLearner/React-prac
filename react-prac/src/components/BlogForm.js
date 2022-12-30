@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
 import propTypes from "prop-types";
-import { v4 as uuidv4 } from "uuid";
 import Toast from "./Toast";
+import useToast from "../hooks/toast";
 
 const BlogForm = ({ editing }) => {
+  const [toasts, addToast, deleteToast] = useToast();
   const history = useHistory();
   const { id } = useParams();
   const [originalTitle, setOriginalTitle] = useState("");
@@ -13,7 +14,6 @@ const BlogForm = ({ editing }) => {
   const [originalPublish, setOriginalPublish] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [bodyError, setBodyError] = useState(false);
-  const [toasts, setToasts] = useState([]);
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -63,27 +63,6 @@ const BlogForm = ({ editing }) => {
     return validated;
   };
 
-  const deleteToast = (id) => {
-    const filteredToasts = toasts.filter((toast) => {
-      return toast.id !== id;
-    });
-    setToasts(filteredToasts);
-  };
-
-  const addToast = (toast) => {
-    const id = uuidv4();
-    console.log("id===", id);
-    const toastWithId = {
-      ...toast,
-      id,
-    };
-    setToasts((prev) => [...prev, toastWithId]);
-
-    setTimeout(() => {
-      deleteToast(id);
-    }, 5000);
-  };
-
   const onSubmit = () => {
     setTitleError(false);
     setBodyError(false);
@@ -111,7 +90,6 @@ const BlogForm = ({ editing }) => {
               type: "success",
               text: "Successfully created",
             });
-            history.push("/admin");
           });
       }
     }

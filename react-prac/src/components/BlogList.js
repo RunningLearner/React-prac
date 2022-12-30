@@ -7,7 +7,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import Pagination from "./Pagination";
 import propTypes from "prop-types";
 import Toast from "./Toast";
-import { v4 as uuidv4 } from "uuid";
+import useToast from "../hooks/toast";
 
 const BlogList = ({ isAdmin }) => {
   const history = useHistory();
@@ -20,8 +20,8 @@ const BlogList = ({ isAdmin }) => {
   const [numberOfPosts, setNumberOfPosts] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [searchText, setSearchText] = useState("");
-  const [toasts, setToasts] = useState([]);
 
+  const [toasts, addToast, deleteToast] = useToast();
   const limit = 3;
 
   useEffect(() => {
@@ -65,26 +65,6 @@ const BlogList = ({ isAdmin }) => {
     setCurrentPage(parseInt(pageParam) || 1);
     getPosts(parseInt(pageParam) || 1);
   }, []);
-
-  const deleteToast = (id) => {
-    const filteredToasts = toasts.filter((toast) => {
-      return toast.id !== id;
-    });
-    setToasts(filteredToasts);
-  };
-
-  const addToast = (toast) => {
-    const id = uuidv4();
-    const toastWithId = {
-      ...toast,
-      id,
-    };
-    setToasts((prev) => [...prev, toastWithId]);
-
-    setTimeout(() => {
-      deleteToast(id);
-    }, 5000);
-  };
 
   const deleteBlog = (e, id) => {
     e.stopPropagation();
