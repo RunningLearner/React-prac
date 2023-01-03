@@ -80,11 +80,12 @@ const BlogList = ({ isAdmin }) => {
     axios
       .delete(`http://localhost:3001/posts/${id}`)
       .then(() => {
-        setPosts((prevPosts) => {
-          return prevPosts.filter((post) => {
-            return post.id !== id;
-          });
-        });
+        // setPosts((prevPosts) => {
+        //   return prevPosts.filter((post) => {
+        //     return post.id !== id;
+        //   });
+        // });
+        getPosts(1);
         addToast({
           text: "Successfully deleted!",
           type: "success",
