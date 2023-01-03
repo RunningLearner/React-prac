@@ -19,6 +19,7 @@ const BlogList = ({ isAdmin }) => {
   const [numberOfPosts, setNumberOfPosts] = useState(0);
   const [numberOfPages, setNumberOfPages] = useState(0);
   const [searchText, setSearchText] = useState("");
+  const [error, setError] = useState("");
 
   const { addToast } = useToast();
   const limit = 3;
@@ -55,6 +56,14 @@ const BlogList = ({ isAdmin }) => {
           setNumberOfPosts(res.headers["x-total-count"]);
           setPosts(res.data);
           setLoading(false);
+        })
+        .catch((e) => {
+          setError("something went wrong in db");
+          addToast({
+            text: "Something went wrong",
+            type: "danger",
+          });
+          setLoading(false);
         });
     },
     [isAdmin, searchText]
@@ -68,17 +77,25 @@ const BlogList = ({ isAdmin }) => {
   const deleteBlog = (e, id) => {
     e.stopPropagation();
 
-    axios.delete(`http://localhost:3001/posts/${id}`).then(() => {
-      setPosts((prevPosts) => {
-        return prevPosts.filter((post) => {
-          return post.id !== id;
+    axios
+      .delete(`http://localhost:3001/posts/${id}`)
+      .then(() => {
+        setPosts((prevPosts) => {
+          return prevPosts.filter((post) => {
+            return post.id !== id;
+          });
+        });
+        addToast({
+          text: "Successfully deleted!",
+          type: "success",
+        });
+      })
+      .catch((e) => {
+        addToast({
+          text: "deletion failed",
+          type: "danger",
         });
       });
-      addToast({
-        text: "Successfully deleted!",
-        type: "success",
-      });
-    });
   };
 
   if (loading) {
@@ -117,6 +134,10 @@ const BlogList = ({ isAdmin }) => {
       getPosts(1);
     }
   };
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div>

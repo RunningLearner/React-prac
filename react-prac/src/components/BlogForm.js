@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
 import propTypes from "prop-types";
+import useToast from "../hooks/toast";
+import LoadingSpinner from "./LoadingSpinner";
 
-const BlogForm = ({ editing, addToast }) => {
+const BlogForm = ({ editing }) => {
   const history = useHistory();
   const { id } = useParams();
   const [originalTitle, setOriginalTitle] = useState("");
@@ -11,6 +13,9 @@ const BlogForm = ({ editing, addToast }) => {
   const [originalPublish, setOriginalPublish] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [bodyError, setBodyError] = useState(false);
+  const { addToast } = useToast();
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -18,14 +23,27 @@ const BlogForm = ({ editing, addToast }) => {
 
   useEffect(() => {
     if (editing) {
-      axios.get(`http://localhost:3001/posts/${id}`).then((res) => {
-        setTitle(res.data.title);
-        setOriginalTitle(res.data.title);
-        setBody(res.data.body);
-        setOriginalBody(res.data.body);
-        setPublish(res.data.publish);
-        setOriginalPublish(res.data.publish);
-      });
+      axios
+        .get(`http://localhost:3001/posts/${id}`)
+        .then((res) => {
+          setTitle(res.data.title);
+          setOriginalTitle(res.data.title);
+          setBody(res.data.body);
+          setOriginalBody(res.data.body);
+          setPublish(res.data.publish);
+          setOriginalPublish(res.data.publish);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setError("Something went wrong in db");
+          addToast({
+            text: "Something went wrong in db",
+            type: "danger",
+          });
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
   }, [id, editing]);
 
@@ -73,6 +91,12 @@ const BlogForm = ({ editing, addToast }) => {
           })
           .then((res) => {
             history.push(`/blogs/${id}`);
+          })
+          .catch((e) => {
+            addToast({
+              text: "Couldn't update blog",
+              type: "danger",
+            });
           });
       } else {
         axios
@@ -88,6 +112,12 @@ const BlogForm = ({ editing, addToast }) => {
               text: "Successfully created",
             });
             history.push(`/admin`);
+          })
+          .catch((e) => {
+            addToast({
+              text: "Couldn't create blog",
+              type: "danger",
+            });
           });
       }
     }
@@ -96,6 +126,14 @@ const BlogForm = ({ editing, addToast }) => {
   const onChangePublish = (e) => {
     setPublish(e.target.checked);
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div>

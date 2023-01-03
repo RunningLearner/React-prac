@@ -3,20 +3,33 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import useToast from "../hooks/toast";
 
 const ShowPage = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timer, setTimer] = useState(0);
+  const { addToast } = useToast();
+  const [error, setError] = useState("");
 
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const getPost = (id) => {
-    axios.get(`http://localhost:3001/posts/${id}`).then((res) => {
-      setPost(res.data);
-      setLoading(false);
-    });
+    axios
+      .get(`http://localhost:3001/posts/${id}`)
+      .then((res) => {
+        setPost(res.data);
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError("Something went wrong in db");
+        addToast({
+          text: "Something went wrong in db",
+          type: "danger",
+        });
+        setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -39,6 +52,9 @@ const ShowPage = () => {
 
   if (loading) {
     return <LoadingSpinner />;
+  }
+  if (error) {
+    return <div>{error}</div>;
   }
 
   return (
