@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import routes from "./routes";
 import useToast from "./hooks/toast";
@@ -31,27 +31,23 @@ const App = () => {
       <NavBar />
       <Toast toasts={toasts} deleteToast={deleteToast} />
       <div className="container mt-3">
-        <Switch>
+        <Routes>
           {routes.map((route) => {
-            if (route.auth) {
-              return (
-                <ProtectedRoute
-                  key={route.path}
-                  path={route.path}
-                  component={route.component}
-                />
-              );
-            }
             return (
               <Route
                 key={route.path}
-                exact
                 path={route.path}
-                component={route.component}
+                element={
+                  route.auth ? (
+                    <ProtectedRoute element={route.element} />
+                  ) : (
+                    route.element
+                  )
+                }
               />
             );
           })}
-        </Switch>
+        </Routes>
       </div>
     </Router>
   );
